@@ -22,6 +22,25 @@ https://www.linkedin.com/learning/laravel-practico-api-rest-para-app-corporativa
 
 ## Commands
 
-- php artisan make:model User -m
-- php artisan make:controller UserController --resource
+```bash
+php artisan make:model User -mcr --api
+```
+
+```shell
+php artisan make:controller UserController --resource
+```
+
+```bashsupport pro shell script
+php artisan migrate
+```
+
+```bash
+php artisan install:api --passport
+```
+
+## Passport Oauth2
+
+```bashsupport pro shell script
+php artisan install:api --passport
+```
 
