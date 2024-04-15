@@ -20,4 +20,8 @@ https://www.linkedin.com/learning/laravel-practico-api-rest-para-app-corporativa
 -
 - Laravel Forge
 
+## Commands
+
+- php artisan make:model User -m
+- php artisan make:controller UserController --resource
 
