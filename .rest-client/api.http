@@ -34,8 +34,40 @@ password_confirmation = pedro1234
 ###
 # group: user
 # @name login
-POST http://{{host}}/api/login?XDEBUG_SESSION_START=PHPSTORM
+POST {{host}}/oauth/token?XDEBUG_SESSION_START=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 
-username = pedrollongo{{$random.integer()}}@gmail.com &
-password = pedro1234
+username = {{Username}} &
+password = {{Password}} &
+grant_type = password &
+client_id = {{pass-client-id}} &
+client_secret = {{pass-client-sec}} &
+scope =
+
+
+
+
+###
+# group: user
+# @name refresh
+POST {{host}}/oauth/token?XDEBUG_SESSION_START=PHPSTORM
+Content-Type: application/x-www-form-urlencoded
+
+refresh_token = def50200bfe8e8b83213929a34c0aa46601bbcf24b8a6356fbc8a2faf73a4cbbb1b9fc578b1304d20c626f63fb3fcd94fff5b8c0611cf00176d0f9686e9b67b2ba65dd8655684b7f7edcd156e983a280c8b8b961746473322752ae25efcb735d4b22ff11c9aa9d4fa27447ef9d727a67ec2ef401747c5c332a417278893ff2d32609e9c96686a973359582166398970588b412b2f0f090d34c4b712c58c08f0985e15307734fd36b1c2e0d72c89b8b7e1274ac4f3ef2b05e955195ea77073423a236f7b05e8fbb0c99176231727279c657302562053fc0d05ba48568eed7ceb2b5840dcae198d95c73ddb6c226a7cd021b4f6f1c4f3718e403993b1193832fb3fe01f458c3ae312bda66260a8f089ff913cc5e1a4d061d8fbc34ab1055eb0fe7e2612561246574200672bdffbab54ece4a1770ae30225e510c17a1aac8b22915baa30ede4f2b8348ace8df7b075c26ec4b3a9007a98f282d4d4e73d75f75a2b82c &
+grant_type = refresh_token &
+client_id = {{pass-client-id}} &
+client_secret = {{pass-client-sec}} &
+scope =
+
+
+
+
+###
+# group: user
+# @name testOauth
+POST http://{{host}}/api/testOauth?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+
+

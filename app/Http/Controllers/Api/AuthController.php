@@ -9,14 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-
     /**
      * funcion auth register
      *
@@ -32,7 +30,8 @@ class AuthController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            Log::error('An error occurred during login: ' . $validator->errors(), ['username' => $request->email]);
+            return $this->sendError('An error occurred during validation', $validator->errors(), 422);
         }
 
         // Crear usuario
@@ -47,56 +46,17 @@ class AuthController extends Controller
             $token = $user->createToken('Laravel Password Grant Client')->accessToken;
             DB::commit();
 
-            return response()->json([
-                'token' => $token,
-                'user' => $user], 200);
-
+            Log::info('User logged in', ['user_id' => $request->user()->id]);
+            return $this->sendResponse([$token, $user], 'Successfully logged in');
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'error' => $e->getMessage()], 500);
+
+            Log::error('An error occurred during login: ' . $e->getMessage(), ['username' => $request->email]);
+            return $this->sendError('An error occurred during login', $e->getMessage(), 500);
+
+
         }
     }
-
-
-    /**
-     * Login api En lugar de esta funcion utilizar la ruta de oauth que tampoco es recomendable (Legacy))
-     * {{base_url}}/oauth/token
-     * ?username=me287@me.com
-     * &password=pedro12345
-     * &grant_type=password
-     * &client_id=2
-     * &client_secret=7FLaTrL88SvSpMz3Va4Jw0N7SyaYSW9b1mNyozUb
-     * &scope=
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    /*public function login (Request $request) {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:6',
-        ]);
-
-        if ($validator->fails())
-        {
-            return response(['errors'=>$validator->errors()->all()], 422);
-        }
-        $user = User::where('email', $request->email)->first();
-        if ($user) {
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                $response = ['token' => $token];
-                return response($response, 200);
-            } else {
-                $response = ['message' => 'Password mismatch'];
-                return response($response, 422);
-            }
-        } else {
-            $response = ['message' =>'User does not exist'];
-            return response($response, 422);
-        }
-    }*/
 
     /**
      * @param Request $request
@@ -126,19 +86,43 @@ class AuthController extends Controller
             }
             DB::commit();
             Log::info('User logged out', ['user_id' => $request->user()->id]);
-            return response()->json(['message' => 'Successfully logged out'], 200);
+            return $this->sendResponse([], 'Successfully logged out');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::info('An error occurred during logout', ['user_id' => $request->user()->id]);
-
-            return response()->json(['error' => 'An error occurred during logout'], 500);
+            // Log the error for debugging
+            Log::error('An error occurred during logout: ' . $e->getMessage(), ['user_id' => $request->user()->id]);
+            // Return a generic error response
+            return $this->sendError('An error occurred during logout', [], 500);
         }
     }
 
-    public function testOauth()
+    /**
+     * Test OAuth token validation and return user information.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function testOauth(Request $request): JsonResponse
     {
-        //todo
-        return Http::get('http://localhost:8000/api/auth/user');
+        try {
+            // Assuming the user is authenticated via OAuth token
+            $user = Auth::user();
+
+            // Check if the user object is not null
+            if (!$user) {
+                return $this->sendError('Unauthorized', [], 401); // Use sendError from BaseController
+            }
+
+            // Return the authenticated user's details
+            return $this->sendResponse($user, 'User authenticated successfully');
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('OAuth Test Error: ' . $e->getMessage());
+
+            // Return a generic error response
+            return $this->sendError('An error occurred during OAuth validation', [], 500);
+        }
     }
 
 }
