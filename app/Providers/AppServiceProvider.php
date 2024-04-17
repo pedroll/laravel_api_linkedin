@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-//use App\Models\Passport\Client;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 
