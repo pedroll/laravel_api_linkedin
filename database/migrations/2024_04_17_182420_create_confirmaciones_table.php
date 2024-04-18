@@ -14,6 +14,9 @@ return new class extends Migration {
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(Actividad::class);
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('actividad_id')->references('id')->on('actividades');
         });
     }
 

@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->text('acercade');
             $table->string('genero');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

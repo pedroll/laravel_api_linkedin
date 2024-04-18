@@ -14,6 +14,8 @@ return new class extends Migration {
             $table->text('descripcion');
             $table->dateTime('fecha');
             $table->timestamps();
+
+
         });
     }
 

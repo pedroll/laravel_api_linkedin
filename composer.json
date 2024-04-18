@@ -12,6 +12,8 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "googee/entity": "^2.3",
+        "googee/laravel-builder": "^0.27.0",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",

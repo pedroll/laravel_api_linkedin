@@ -1,0 +1,290 @@
+{
+    "info": {
+        "_postman_id": "7b51a3aa-96ef-4374-8bd8-ff7dcf807b93",
+        "name": "laravel_api_linkedin",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "352713"
+    },
+    "item": [
+        {
+            "name": "register",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "urlencoded",
+                    "urlencoded": [
+                        {
+                            "key": "name",
+                            "value": "perico",
+                            "type": "text"
+                        },
+                        {
+                            "key": "email",
+                            "value": "me{{$randomInt}}@me.com",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password",
+                            "value": "pedro1234",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password_confirmation",
+                            "value": "pedro1234",
+                            "type": "text"
+                        },
+                        {
+                            "key": "grant_type",
+                            "value": "password",
+                            "type": "text",
+                            "disabled": true
+                        },
+                        {
+                            "key": "client_secret",
+                            "value": "2",
+                            "type": "text"
+                        },
+                        {
+                            "key": "client_secret",
+                            "value": "7FLaTrL88SvSpMz3Va4Jw0N7SyaYSW9b1mNyozUb",
+                            "type": "text"
+                        },
+                        {
+                            "key": "scope",
+                            "value": "",
+                            "type": "text",
+                            "disabled": true
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/register",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "register"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "register Copy",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "urlencoded",
+                    "urlencoded": [
+                        {
+                            "key": "name",
+                            "value": "perico",
+                            "type": "text"
+                        },
+                        {
+                            "key": "email",
+                            "value": "me{{$randomInt}}@me.com",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password",
+                            "value": "pedro1234",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password_confirmation",
+                            "value": "pedro1234",
+                            "type": "text"
+                        },
+                        {
+                            "key": "grant_type",
+                            "value": "password",
+                            "type": "text",
+                            "disabled": true
+                        },
+                        {
+                            "key": "client_secret",
+                            "value": "2",
+                            "type": "text"
+                        },
+                        {
+                            "key": "client_secret",
+                            "value": "7FLaTrL88SvSpMz3Va4Jw0N7SyaYSW9b1mNyozUb",
+                            "type": "text"
+                        },
+                        {
+                            "key": "scope",
+                            "value": "",
+                            "type": "text",
+                            "disabled": true
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/register",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "register"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "login",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "urlencoded",
+                    "urlencoded": [
+                        {
+                            "key": "name",
+                            "value": "perico",
+                            "type": "text",
+                            "disabled": true
+                        },
+                        {
+                            "key": "email",
+                            "value": "me287@me.com",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password",
+                            "value": "pedro12345",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password_confirmation",
+                            "value": "pedro1234",
+                            "type": "text",
+                            "disabled": true
+                        },
+                        {
+                            "key": "grant_type",
+                            "value": "password",
+                            "type": "text"
+                        },
+                        {
+                            "key": "client_id",
+                            "value": "2",
+                            "type": "text"
+                        },
+                        {
+                            "key": "client_secret",
+                            "value": "7FLaTrL88SvSpMz3Va4Jw0N7SyaYSW9b1mNyozUb",
+                            "type": "text"
+                        },
+                        {
+                            "key": "scope",
+                            "value": "",
+                            "type": "text",
+                            "disabled": true
+                        }
+                    ]
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "login Oauth",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "urlencoded",
+                    "urlencoded": [
+                        {
+                            "key": "name",
+                            "value": "perico",
+                            "type": "text"
+                        },
+                        {
+                            "key": "email",
+                            "value": "me{{$randomInt}}@me.com",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password",
+                            "value": "pedro1234",
+                            "type": "text"
+                        },
+                        {
+                            "key": "password_confirmation",
+                            "value": "pedro1234",
+                            "type": "text"
+                        },
+                        {
+                            "key": "grant_type",
+                            "value": "password",
+                            "type": "text",
+                            "disabled": true
+                        },
+                        {
+                            "key": "client_secret",
+                            "value": "2",
+                            "type": "text"
+                        },
+                        {
+                            "key": "client_secret",
+                            "value": "7FLaTrL88SvSpMz3Va4Jw0N7SyaYSW9b1mNyozUb",
+                            "type": "text"
+                        },
+                        {
+                            "key": "scope",
+                            "value": "",
+                            "type": "text",
+                            "disabled": true
+                        }
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "laravel_api_linkedin.local",
+            "type": "string"
+        }
+    ]
+}

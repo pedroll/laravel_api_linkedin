@@ -1,14 +1,9 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Laravel práctico: API REST para app corporativa web y móvil de hotel
 
-## Linkedin Learning
-
+    Linkedin Learning
+    Actualizado a Laravel 11 durante el curso
 https://www.linkedin.com/learning/laravel-practico-api-rest-para-app-corporativa-web-y-movil-de-hotel
 
 ## Tolling
@@ -17,8 +12,10 @@ https://www.linkedin.com/learning/laravel-practico-api-rest-para-app-corporativa
 
 - PhpStorm
 - Devilbox
--
-- Laravel Forge
+- Phpstorm http/rest client
+- Oauth 2
+- Passport
+- Laravel 11
 
 ## Commands
 
@@ -34,13 +31,9 @@ php artisan make:controller UserController --resource
 php artisan migrate
 ```
 
-```bash
-php artisan install:api --passport
-```
-
 ## Passport Oauth2
 
-```bashsupport pro shell script
+```bash
 php artisan install:api --passport
 ```
 
