@@ -28,7 +28,9 @@ php artisan make:controller UserController --resource
 ```
 
 ```bashsupport pro shell script
-php artisan migrate
+php artisan migrate;
+
+php artisan migrate:refresh --step=
 ```
 
 ## Passport Oauth2

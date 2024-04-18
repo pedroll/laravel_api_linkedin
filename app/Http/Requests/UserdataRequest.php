@@ -14,6 +14,12 @@ class userdataRequest extends FormRequest
             'edad' => ['required'],
             'acercade' => ['required'],
             'genero' => ['required'],
+            'filterBy' => ['nullable'],
+            'filter' => ['nullable'],
+            'orderBy' => ['nullable'],
+            'order' => ['nullable'],
+            'page' => ['nullable'],
+            'perPage' => ['nullable'],
         ];
     }
 

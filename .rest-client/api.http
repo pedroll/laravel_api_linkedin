@@ -71,3 +71,18 @@ Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{$auth.token("MypasswordConfig")}}
 
 
+###
+# group: user
+# @name getUsers
+GET http://{{host}}/api/getUserdatas?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+
+###
+# group: user
+# @name getUserdata
+GET http://{{host}}/api/getUserdata/1?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}

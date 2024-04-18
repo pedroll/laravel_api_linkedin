@@ -2,26 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    protected $routePath = 'user';
+    protected $viewPath = 'user';
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $page = User::query()->paginate();
-        return response()->json(compact('page'));
+        // Retrieve query parameters for filtering and sorting
+        $filterBy = $request->query('filterBy');
+        $sortBy = $request->query('sortBy', 'created_at');
+        $sortOrder = $request->query('sortOrder', 'desc');
+
+        // Query building with optional filtering and sorting
+        $query = User::query();
+
+        if ($filterBy) {
+            $query->where('name', 'like', "%{$filterBy}%"); // Example filtering by name
+        }
+
+        $users = $query->orderBy($sortBy, $sortOrder)->paginate(10);
+
+        // Using UserResource to transform the collection
+        //return UserResource::collection($users);
+        return response()->json($users, 200);
+
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param CreateUserRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(CreateUserRequest $request)
     {
@@ -35,7 +58,7 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function show($id)
     {
@@ -48,7 +71,7 @@ class UserController extends Controller
      *
      * @param int $id
      * @param UpdateUserRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update($id, UpdateUserRequest $request)
     {
@@ -61,7 +84,7 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy($id)
     {
