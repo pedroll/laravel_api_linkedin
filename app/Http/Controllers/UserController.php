@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Controllers\Api\ApiController;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
     protected $routePath = 'user';
     protected $viewPath = 'user';
@@ -43,15 +43,27 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param CreateUserRequest $request
+     * @param Request $request
      * @return JsonResponse
      */
-    public function store(CreateUserRequest $request)
+    public function store(Request $request)
     {
-        $item = new User;
-        $item->fill($request->validated());
-        $item->save();
-        return response()->json(compact('item'));
+//        $item = new User;
+//        $item->fill($request->validated());
+//        $item->save();
+        try {
+            $user = User::create($request->validated());
+
+            $result = [
+                'user' => $user,
+            ];
+            $message = 'User creado correctamente';
+
+            return $this->sendResponse($result, $message, 201);
+        } catch (\Exception $e) {
+            Log::error('User creation failed: ' . $e->getMessage(), ['username' => $request->email]);
+            return $this->sendError('User creation failed: ', $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -70,10 +82,10 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param int $id
-     * @param UpdateUserRequest $request
+     * @param Request $request
      * @return JsonResponse
      */
-    public function update($id, UpdateUserRequest $request)
+    public function update($id, Request $request)
     {
         $item = User::query()->findOrFail($id);
         $item->update($request->validated());

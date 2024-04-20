@@ -1,27 +1,24 @@
 ###
 # group: user
 # @name register
-POST http://{{host}}/api/register?XDEBUG_SESSION_START=PHPSTORM
+POST {{host}}/api/register?XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/json
 
 {
     "grant_type": "password",
-    "client_id": 4,
-    "client_secret": "IQY3UuCXjytowgg9SHGPWiJ2BUvcsyZhp26JY2SA",
-    "scope": "*",
+    "client_id": "{{pass-client-id}}",
+    "client_secret": "{{pass-client-sec}}",
+    "scope": "",
     "name": "test",
     "email": "pedrollongo{{$random.integer()}}@gmail.com",
     "password": "pedro1234",
     "password_confirmation": "pedro1234"
 }
-
-
-
 ###
 # group: user
 # @name register2
-POST http://{{host}}/api/register?XDEBUG_SESSION_START=PHPSTORM
+POST {{host}}/api/register?XDEBUG_SESSION_START=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 XDEBUG_SESSION: PHPSTORM;
 XDEBUG_SESSION_START: PHPSTORM;
@@ -30,7 +27,6 @@ name = test &
 email = pedrollongo{{$random.integer()}}@gmail.com &
 password = pedro1234 &
 password_confirmation = pedro1234
-
 ###
 # group: user
 # @name login
@@ -43,9 +39,6 @@ grant_type = password &
 client_id = {{pass-client-id}} &
 client_secret = {{pass-client-sec}} &
 scope =
-
-
-
 
 ###
 # group: user
@@ -65,24 +58,84 @@ scope =
 ###
 # group: user
 # @name testOauth
-POST http://{{host}}/api/testOauth?XDEBUG_SESSION_START=PHPSTORM
+POST {{host}}/api/testOauth?XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{$auth.token("MypasswordConfig")}}
-
-
 ###
 # group: user
-# @name getUsers
-GET http://{{host}}/api/getUserdatas?XDEBUG_SESSION_START=PHPSTORM
+# @name user
+GET {{host}}/api/user
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{$auth.token("MypasswordConfig")}}
-
 ###
 # group: user
 # @name getUserdata
-GET http://{{host}}/api/getUserdata/1?XDEBUG_SESSION_START=PHPSTORM
+GET {{host}}/api/user/119?XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+
+###
+# @group: user
+# @name createUser
+POST {{host}}/api/user/{id}?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+XDEBUG_SESSION: PHPSTORM;
+XDEBUG_SESSION_START: PHPSTORM;
+
+{
+    "name": "test",
+    "email": "pedrollongo{{$random.integer()}}@gmail.com",
+    "password": "pedro1234",
+    "password_confirmation": "pedro1234",
+    "nombre": "test",
+    "edad": "18",
+    "acercade": "alejop",
+    "genero": "Masculino",
+    "foto": "http://localhost/assets/img/logo.png",
+    "filterBy": "",
+    "filter": "",
+    "orderBy": "",
+    "order": "",
+    "page": "",
+    "perPage": ""
+}
+
+###
+# @group: user
+# @name updateUser
+PUT {{host}}/api/user?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+XDEBUG_SESSION: PHPSTORM;
+XDEBUG_SESSION_START: PHPSTORM;
+
+{
+    "name": "updated{{$random.integer()}}",
+    "email": "pedrollongo935@gmail.com",
+    "password": "pedro1234",
+    "password_confirmation": "pedro1234",
+    "edad": "{{$random.integer()}}",
+    "acercade": "alejop{{$random.integer()}}",
+    "genero": "Masculino",
+    "foto": "http://localhost/assets/img/logo.png",
+    "filterBy": "",
+    "filter": "",
+    "orderBy": "",
+    "order": "",
+    "page": "",
+    "perPage": ""
+}
+
+###
+# @group: user
+# @name deleteUser
+DELETE {{host}}/api/user/120?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/json
 Authorization: Bearer {{$auth.token("MypasswordConfig")}}
