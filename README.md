@@ -33,9 +33,12 @@ php artisan migrate;
 php artisan migrate:refresh --step=
 ```
 
+```bashsupport pro shell script
+php artisan route:list
+```
 ## Passport Oauth2
 
-```bash
+```shell
 php artisan install:api --passport
 ```
 

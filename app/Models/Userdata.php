@@ -13,6 +13,7 @@ class Userdata extends Model
         'edad',
         'acercade',
         'genero',
+        'user_id'
     ];
 
     protected function user(): BelongsTo

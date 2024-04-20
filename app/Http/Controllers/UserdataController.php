@@ -13,36 +13,222 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
 
 class UserdataController extends ApiController
 {
-    /*public function index()
+
+    public function index(Request $request): JsonResponse
     {
-        return userdataResource::collection(userdata::all());
-    }*/
-    public function index(Request $request)
+        try {
+            //$users = User::all();
+            // query users and aply filters and sort with db::table
+            $users = DB::table('users')
+                ->join('userdatas', 'users.id', '=', 'userdatas.user_id')
+                ->select("user_id", "nombre", 'foto', "edad", "genero");
+
+//            $this->applyFilters($users, $request);
+//            $this->applySorts($users, $request);
+
+            $users = $users->get();
+
+            $result = [
+                'users' => $users
+            ];
+            $message = "Userdatas recuperados correctamente";
+
+            return $this->sendResponse($result, $message);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Users not found: ' . $e->getMessage());
+            return $this->sendError('Users not found', $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage(), ['username' => $request->email]);
+            return $this->sendError('An error occurred', $e->getMessage(), 500);
+        }
+    }
+
+    public function show($id, Request $request): JsonResponse
+    {
+        try {
+            $user = User::findOrFail($id);
+            // get Userdata
+            $userdata = Userdata::where("user_id", "=", $id)->first();
+            $userdata = new UserdataResource($userdata);
+            // otro aproach
+//            $user = User::findOrFail($id);
+//            $userdata2 = new UserdataResource($user->userdata);
+
+            $result = [
+                'user' => $user,
+                'userdata' => $userdata,
+            ];
+            $message = 'Userdatas recuperados correctamente';
+
+            return $this->sendResponse($result, $message);
+        } catch (ModelNotFoundException $e) {
+            Log::error('User not found: ' . $id . '. ' . $e->getMessage());
+            return $this->sendError('User not found:' . $id, $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage(), ['id' => $id]);
+            return $this->sendError('An error occurred', $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * @param userdataRequest $request
+     * @return View|JsonResponse
+     */
+    public function store(userdataRequest $request): View|JsonResponse
+    {
+        // validate userdataRequest
+        $validated = $request->validated();
+
+        try {
+            DB::beginTransaction();
+
+            $user = User::create($validated);
+
+            $userdata = $validated + ['user_id' => $user->id, 'nombre' => $user->name];
+            $userdata = Userdata::create($userdata);
+
+            $token = $user->createToken('auth_token')->accessToken;
+
+            $result = [
+                'token' => $token,
+                'user' => $user,
+                'userdata' => $userdata,
+            ];
+            $message = 'User creado correctamente';
+            //end transaction
+            DB::commit();
+            Log::info($message, ['user_id' => $user->id]);
+
+            if ($request->wantsJson()) { // check InteractsWithContentTypes trait to see all the methods available
+                // return json response
+                return $this->sendResponse($result, $message);
+
+            }
+// return redirect response
+            //return redirect()->route('some.route')->with('success', 'User created successfully');
+
+            return view('userdata.create', $result)->with('success', 'User created successfully');
+            //return redirect()->route('form_view', ['id' => $id]);
+        } catch (\Exception $e) {
+            // Rollback transaction on failure
+            DB::rollBack();
+            Log::error('User creation failed: ' . $e->getMessage(), ['username' => $request->email]);
+            return $this->sendError('User creation failed: ', $e->getMessage(), 500);
+        }
+
+
+    }
+
+    public function create(): JsonResponse
+    {
+        $result = [
+            'message' => 'Render form to store user',
+        ];
+        return $this->sendResponse($result, 'Render form to store user');
+    }
+
+    public function update(UserdataRequest $request, $id = null): JsonResponse
     {
 
+        try {
+            $validatedData = $request->validated();
 
-        // Query building with optional filtering and sorting
-        $query = Userdata::query();
+            DB::BeginTransaction();
 
-        // Dynamic Filtering
-        $this->applyFilters($query, $request);
+            // find user by id
+            $user = User::findOrFail($id);
+            // find userdata by user_id
+            $userdata = Userdata::where('user_id', $user->id)->firstOrFail();
 
+            // only uodate desired fields name , nombre, edad genero acercade. email and password no modificables
+            $user->update([
+                'name' => $validatedData['name'],
 
-        // Dynamic Sorting
-        $this->applySorts($query, $request);
+            ]);
+            $userdata->update([
+                'nombre' => $validatedData['name'],
+                'edad' => $validatedData['edad'],
+                'genero' => $validatedData['genero'],
+                'acercade' => $validatedData['acercade']
+            ]);
 
+            $userdataResource = new UserdataResource($userdata);
 
-        // Enhanced Pagination
-        $perPage = $request->query('perPage', 10);
-        $userDatas = $query->paginate($perPage);
+            $result = [
+                'userdata' => $userdataResource,
+                'user' => $user,
+            ];
+            $message = 'User actualizado correctamente';
+            //end transaction
+            DB::commit();
+            Log::info($message, ['user_id' => $user->id]);
+            return $this->sendResponse($result, $message);
+        } catch (\Exception $e) {
+            // Rollback transaction on failure
+            DB::rollBack();
+            $message = 'User update failed: ';//end transaction
 
-        // Using UserResource to transform the collection
-        return UserdataResource::collection($userDatas);
-        //return response()->json($userDatas, 200);
+            Log::error($message . $e->getMessage(), ['email' => $validatedData['email']]);
+            return $this->sendError('User update failed: ', $e->getMessage(), 500);
+        }
 
+    }
+
+    public function destroy(int $id)
+    {
+
+        $user = User::findOrFail($id);
+        $email = $user['email'];
+        $userdata = Userdata::where("user_id", "=", $id)->firstOrFail();
+        try {
+            DB::beginTransaction();
+
+            $userdata->delete();
+            $user->delete();
+
+            DB::commit();
+
+            Log::info('User deleted: ' . $id . ' ' . $email);
+            return $this->sendResponse([], 'Usuario borrado: ' . $id);
+        } catch (ModelNotFoundException $e) {
+            Log::error('User not found: ' . $email . '. ' . $e->getMessage());
+            return $this->sendError('User not found: ' . $id, $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('An error occurred: ' . $e->getMessage(), ['email' => $email]);
+            return $this->sendError('An error occurred', $e->getMessage(), 500);
+        }
+
+    }
+
+    // function create, renders form to store user
+
+    public function edit($id): JsonResponse
+    {
+        try {
+            $user = User::findOrFail($id);
+            $userdata = Userdata::where("user_id", "=", $id)->first();
+
+            $result = [
+                'user' => $user,
+                'userdata' => $userdata,
+            ];
+            //redirect to form view, who renders form to edit user
+
+            //return view('form_view', $result);
+
+            return $this->sendResponse($result, 'Userdata edit retrieved successfully');
+        } catch (ModelNotFoundException $e) {
+            Log::error('User not found: ' . $id . '. ' . $e->getMessage());
+            return $this->sendError('User not found: ' . $id, $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage(), ['id' => $id]);
+            return $this->sendError('An error occurred', $e->getMessage(), 500);
+        }
     }
 
     private function applyFilters(Builder $query, Request $request): void
@@ -57,6 +243,8 @@ class UserdataController extends ApiController
             }
         }
     }
+
+    //edit function
 
     private function applySorts(Builder $query, Request $request): void
     {
@@ -73,77 +261,4 @@ class UserdataController extends ApiController
         }
     }
 
-    public function getUserdatas(Request $request): ?JsonResponse
-    {
-        try {
-            //$users = User::all();
-            $users = DB::table('users')
-                ->join('userdatas', 'users.id', '=', 'userdatas.user_id')
-                ->select("user_id", "nombre", 'foto', "edad", "genero")
-                ->get();
-            $result = [
-                'users' => $users
-            ];
-            $message = "Userdatas recuperados correctamente";
-
-            return $this->sendResponse($result, $message);
-        } catch (ModelNotFoundException $e) {
-            Log::error('Users not found: ' . $e->getMessage());
-            return $this->sendError('Users not found', $e->getMessage(), 404);
-        } catch (\Exception $e) {
-            Log::error('An error occurred: ' . $e->getMessage(), ['username' => $request->email]);
-            return $this->sendError('An error occurred', $e->getMessage(), 500);
-        }
-    }
-
-    public function getUserdataDetail($id, Request $request): ?JsonResponse
-    {
-        try {
-            $user = User::findOrFail($id);
-           // get Userdata
-            $userdata = Userdata::where("user_id", "=", $id)->first();
-            $userdata =new UserdataResource($userdata);
-            // otro aproach
-//            $user = User::findOrFail($id);
-//            $userdata2 = new UserdataResource($user->userdata);
-
-            $result = [
-                'user' => $user,
-                'userdata' => $userdata,
-            ];
-            $message = 'Userdatas recuperados correctamente';
-
-            return $this->sendResponse($result, $message);
-        } catch (ModelNotFoundException $e) {
-            Log::error('User not found: '. $id.'. '. $e->getMessage());
-            return $this->sendError('User not found:'. $id, $e->getMessage(), 404);
-        } catch (\Exception $e) {
-            Log::error('An error occurred: ' . $e->getMessage(), ['id' => $id]);
-            return $this->sendError('An error occurred', $e->getMessage(), 500);
-        }
-    }
-
-    public function store(userdataRequest $request)
-    {
-        return new UserdataResource(Userdata::create($request->validated()));
-    }
-
-    public function show(Userdata $userdata)
-    {
-        return new UserdataResource($userdata);
-    }
-
-    public function update(userdataRequest $request, Userdata $userdata)
-    {
-        $userdata->update($request->validated());
-
-        return new UserdataResource($userdata);
-    }
-
-    public function destroy(Userdata $userdata)
-    {
-        $userdata->delete();
-
-        return response()->json();
-    }
 }

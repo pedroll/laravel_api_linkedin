@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,48 +12,51 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class AuthController extends Controller
+/**
+ * AuthController handles authentication processes including user registration, login, and logout.
+ */
+class AuthController extends ApiController
 {
     /**
-     * funcion auth register
+     * Register a new user with the provided credentials.
      *
-     * @param Request $request
-     * @return JsonResponse
+     * @param Request $request The request object containing user input.
+     * @return JsonResponse|null A JSON response with the access token and user details on success, or an error message on failure.
      */
     public function register(Request $request): ?JsonResponse
     {
-        // validacion
+        // Validate the request data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
+
         if ($validator->fails()) {
-            Log::error('An error occurred during login: ' . $validator->errors(), ['username' => $request->email]);
-            return $this->sendError('An error occurred during validation', $validator->errors(), 422);
+            Log::error('Validation error during registration', ['email' => $request->email, 'errors' => $validator->errors()]);
+            return $this->sendError('Validation error', $validator->errors(), 422);
         }
 
-        // Crear usuario
+        // Attempt to create a new user
         DB::beginTransaction();
         try {
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->password = Hash::make($request['password']);
-            $user->remember_token = Str::random(10);
+            $user = new User([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request['password']),
+                'remember_token' => Str::random(10),
+            ]);
             $user->save();
+
             $token = $user->createToken('Laravel Password Grant Client')->accessToken;
             DB::commit();
 
-            Log::info('User logged in', ['user_id' => $request->user()->id]);
-            return $this->sendResponse([$token, $user], 'Successfully logged in');
+            Log::info('User registration successful', ['user_id' => $user->id]);
+            return $this->sendResponse(['token' => $token, 'user' => $user], 'User registered successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-
-            Log::error('An error occurred during login: ' . $e->getMessage(), ['username' => $request->email]);
-            return $this->sendError('An error occurred during login', $e->getMessage(), 500);
-
-
+            Log::error('Registration error', ['email' => $request->email, 'error' => $e->getMessage()]);
+            return $this->sendError('Registration error', ['error' => $e->getMessage()], 500);
         }
     }
 

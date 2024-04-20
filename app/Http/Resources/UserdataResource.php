@@ -12,23 +12,24 @@ class UserdataResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        // handle collection with pgination
-
-
-
-        //add pagination
-
         return [
-
-            'id' => $this->id,
             'nombre' => $this->nombre,
             'foto' => $this->foto,
             'edad' => $this->edad,
             'acercade' => $this->acercade,
             'genero' => $this->genero,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-
+            'created_at' => $this->formattedCreatedAt(),
+            'updated_at' => $this->formattedUpdatedAt(),
         ];
+    }
+
+    private function formattedCreatedAt(): string
+    {
+        return $this->created_at->format('Y-m-d H:i:s');
+    }
+
+    private function formattedUpdatedAt(): string
+    {
+        return $this->updated_at->format('Y-m-d H:i:s');
     }
 }
