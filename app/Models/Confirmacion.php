@@ -5,9 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class confirmacion extends Model
+class Confirmacion extends Model
 {
     protected $table = 'confirmaciones';
+
+    protected $fillable = [
+        'user_id',
+        'actividad_id',
+    ];
 
     protected function user(): BelongsTo
     {

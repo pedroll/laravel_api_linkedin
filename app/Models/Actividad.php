@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Actividad extends Model
 {
@@ -12,13 +11,12 @@ class Actividad extends Model
     protected $fillable = [
         'nombre',
         'foto',
-        'edad',
-        'acercade',
-        'genero',
+        'descripcion',
+        'fecha',
     ];
 
-    protected function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+//    protected function user(): BelongsTo
+//    {
+//        return $this->belongsTo(User::class);
+//    }
 }

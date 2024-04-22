@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\ActividadController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\UserdataController;
+use App\Http\Controllers\Api\ConfirmacionController;
+use App\Http\Controllers\Api\UserdataController;
 use Illuminate\Support\Facades\Route;
 
 // curso master laravel api, login por /oauth/token
@@ -18,6 +20,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 //    Route::delete('user', [UserdataController::class, 'destroy']);
     //routes resource userdata
     Route::resource('user', UserdataController::class);
+    // routes resources actividad
+    Route::resource('actividad', ActividadController::class);
+    Route::resource('confirmacion', ConfirmacionController::class);
 
     Route::post('testOauth', [AuthController::class, 'testOauth']);
     Route::post('refresh', [AuthController::class, 'refresh']);

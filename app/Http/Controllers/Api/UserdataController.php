@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\UserdataRequest;
 use App\Http\Resources\UserdataResource;
 use App\Models\User;
 use App\Models\Userdata;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\View;
 
 class UserdataController extends ApiController
 {
@@ -76,9 +73,9 @@ class UserdataController extends ApiController
 
     /**
      * @param UserdataRequest $request
-     * @return View|JsonResponse
+     * @return JsonResponse
      */
-    public function store(UserdataRequest $request): View|JsonResponse
+    public function store(UserdataRequest $request): JsonResponse
     {
         // validate userdataRequest
         $validated = $request->validated();
@@ -103,15 +100,10 @@ class UserdataController extends ApiController
             DB::commit();
             Log::info($message, ['user_id' => $user->id]);
 
-            if ($request->wantsJson()) { // check InteractsWithContentTypes trait to see all the methods available
-                // return json response
-                return $this->sendResponse($result, $message);
-
-            }
 // return redirect response
             //return redirect()->route('some.route')->with('success', 'User created successfully');
+            return $this->sendResponse($result, $message);
 
-            return view('userdata.create', $result)->with('success', 'User created successfully');
             //return redirect()->route('form_view', ['id' => $id]);
         } catch (\Exception $e) {
             // Rollback transaction on failure
@@ -231,34 +223,6 @@ class UserdataController extends ApiController
         }
     }
 
-    private function applyFilters(Builder $query, Request $request): void
-    {
-        $allowedFields = ['nombre', 'edad', 'genero']; // Define allowed fields for filtering
-        if ($request->has('filters')) {
-            $filters = json_decode($request->filters, true);
-            foreach ($filters as $field => $value) {
-                if (in_array($field, $allowedFields)) { // Check if the field is allowed
-                    $query->where($field, 'like', "%{$value}%");
-                }
-            }
-        }
-    }
-
     //edit function
-
-    private function applySorts(Builder $query, Request $request): void
-    {
-        $allowedSortFields = ['nombre', 'created_at']; // Define allowed fields for sorting
-        if ($request->has('sorts')) {
-            $sorts = json_decode($request->sorts, true);
-            foreach ($sorts as $field => $direction) {
-                if (in_array($field, $allowedSortFields) && in_array($direction, ['asc', 'desc'])) { // Validate field and direction
-                    $query->orderBy($field, $direction);
-                }
-            }
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-    }
 
 }

@@ -1,0 +1,67 @@
+###
+# group: confirmacion
+# @name confirmacion
+GET {{host}}/api/confirmacion
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+
+###
+# group: confirmacion
+# @name getConfirmacion
+GET {{host}}/api/confirmacion/8?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+
+###
+# @group: confirmacion
+# @name createConfirmacion
+POST {{host}}/api/confirmacion?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+XDEBUG_SESSION: PHPSTORM;
+XDEBUG_SESSION_START: PHPSTORM;
+
+{
+    "user_id": "119",
+    "actividad_id": "1",
+    "filterBy": "",
+    "filter": "",
+    "orderBy": "",
+    "order": "",
+    "page": "",
+    "perPage": ""
+}
+
+###
+# @group: confirmacion
+# @name updateConfirmacion
+PUT {{host}}/api/confirmacion/10?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+XDEBUG_SESSION: PHPSTORM;
+XDEBUG_SESSION_START: PHPSTORM;
+
+{
+    "nombre": "escalada actualizada",
+    "foto": "http://localhost/assets/img/logo.png",
+    "descripcion": "escalada escalada escalada escalada escalada escaladaescalada",
+    "fecha": "2024-04-22 19:46:09",
+    "filterBy": "",
+    "filter": "",
+    "orderBy": "",
+    "order": "",
+    "page": "",
+    "perPage": ""
+}
+
+###
+# @group: confirmacion
+# @name deleteConfirmacion
+DELETE {{host}}/api/confirmacion/90?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * ApiController class to standardize JSON responses for API requests.
@@ -49,5 +51,31 @@ class ApiController extends Controller
         }
         // todo manejar Logging
         return response()->json($response, $code);
+    }
+
+    public function applyFilters(Builder $query, Request $request, array $allowedFields = []): void
+    {
+        if ($request->has('filters')) {
+            $filters = json_decode($request->filters, true);
+            foreach ($filters as $field => $value) {
+                if (in_array($field, $allowedFields)) { // Check if the field is allowed
+                    $query->where($field, 'like', "%{$value}%");
+                }
+            }
+        }
+    }
+
+    public function applySorts(Builder $query, Request $request, array $allowedSortFields): void
+    {
+        if ($request->has('sorts')) {
+            $sorts = json_decode($request->sorts, true);
+            foreach ($sorts as $field => $direction) {
+                if (in_array($field, $allowedSortFields) && in_array($direction, ['asc', 'desc'])) { // Validate field and direction
+                    $query->orderBy($field, $direction);
+                }
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
     }
 }
