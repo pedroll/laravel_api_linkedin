@@ -9,7 +9,7 @@ Authorization: Bearer {{$auth.token("MypasswordConfig")}}
 ###
 # group: confirmacion
 # @name getConfirmacion
-GET {{host}}/api/confirmacion/8?XDEBUG_SESSION_START=PHPSTORM
+GET {{host}}/api/confirmacion/6?XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{$auth.token("MypasswordConfig")}}
@@ -25,8 +25,8 @@ XDEBUG_SESSION: PHPSTORM;
 XDEBUG_SESSION_START: PHPSTORM;
 
 {
-    "user_id": "119",
-    "actividad_id": "1",
+    "user_id": "120",
+    "actividad_id": "5",
     "filterBy": "",
     "filter": "",
     "orderBy": "",

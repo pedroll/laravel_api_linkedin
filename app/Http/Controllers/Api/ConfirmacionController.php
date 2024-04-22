@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ConfirmacionRequest;
+use App\Http\Resources\ActividadResource;
 use App\Http\Resources\ConfirmacionResource;
+use App\Models\Actividad;
 use App\Models\Confirmacion;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -98,14 +100,26 @@ class ConfirmacionController extends ApiController
      * @param int $id
      * @return JsonResponse
      */
-    public function show(int $id): JsonResponse
+    public function show(int $id, Request $request): JsonResponse
     {
         try {
             $confirmacion = Confirmacion::findOrFail($id);
             $confirmacionResource = new ConfirmacionResource($confirmacion);
 
+            $actividad = Actividad::findOrFail( $confirmacion->actividad_id);
+            $actividadResource = new ActividadResource($actividad);
+
+            $asistentes = DB::table('confirmaciones')
+                ->where('actividad_id', '=', $actividad->id)
+                ->join('userdatas','userdatas.user_id','=','confirmaciones.user_id')
+                ->select('userdatas.id','userdatas.nombre','userdatas.edad','userdatas.genero','userdatas.foto')
+                ->get();                //
+
+
             $result = [
                 'confirmacion' => $confirmacionResource,
+                'actividad' => $actividadResource,
+                'asistentes' =>$asistentes
             ];
             $message = 'Confirmacion recuperados correctamente';
 

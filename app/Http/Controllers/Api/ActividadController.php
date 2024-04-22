@@ -91,11 +91,19 @@ class ActividadController extends ApiController
         try {
             $actividad = Actividad::findOrFail($id);
             $actividadResource = new ActividadResource($actividad);
+            //confirmaciones de esta actividad
+            $confirmaciones = DB::table('confirmaciones')
+                ->where('actividad_id', '=', $id)
+                ->join('userdatas','userdatas.user_id','=','confirmaciones.user_id')
+                ->select('userdatas.nombre')
+                ->get();
 
             $result = [
                 'actividad' => $actividadResource,
+                'confirmaciones' => $confirmaciones,
+
             ];
-            $message = 'Userdatas recuperados correctamente';
+            $message = 'Actividades recuperados correctamente';
 
             return $this->sendResponse($result, $message);
         } catch (ModelNotFoundException $e) {

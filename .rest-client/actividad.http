@@ -9,7 +9,7 @@ Authorization: Bearer {{$auth.token("MypasswordConfig")}}
 ###
 # group: actividad
 # @name getActividad
-GET {{host}}/api/actividad/8?XDEBUG_SESSION_START=PHPSTORM
+GET {{host}}/api/actividad/1?XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer {{$auth.token("MypasswordConfig")}}
