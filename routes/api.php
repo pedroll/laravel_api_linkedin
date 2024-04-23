@@ -19,7 +19,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 //    Route::put('user', [UserdataController::class, 'update']);
 //    Route::delete('user', [UserdataController::class, 'destroy']);
     //routes resource userdata
+    Route::put('user/addonesignal/{id}', [UserdataController::class, 'addonesignal']);
+
     Route::resource('user', UserdataController::class);
+    // route user/addonesignal/{id}
     // routes resources actividad
     Route::resource('actividad', ActividadController::class);
     Route::resource('confirmacion', ConfirmacionController::class);
@@ -28,6 +31,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
 
 });
+// protected route addonesignal
 
 
 

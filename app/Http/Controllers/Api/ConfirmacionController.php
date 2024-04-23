@@ -12,6 +12,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use OneSignal;
+
 
 /**
  * ConfirmacionController handles the CRUD operations for Confirmacion model.
@@ -67,7 +69,7 @@ class ConfirmacionController extends ApiController
             ])->first();
             if ($confirmacion) {
                 $message = 'Confirmacion ya existe';
-                return $this->sendError($message, $message, 400);
+                // return $this->sendError($message, $message, 400);
             }
 
             DB::beginTransaction();
@@ -80,6 +82,34 @@ class ConfirmacionController extends ApiController
             $message = 'Confirmacion creado correctamente';
             //end transaction
             DB::commit();
+
+            $asistentes = DB::table('confirmaciones')
+                ->where('actividad_id', '=', $confirmacion->actividad_id)
+                ->join('userdatas', 'userdatas.user_id', '=', 'confirmaciones.user_id')
+                ->select('userdatas.id', 'userdatas.nombre', 'userdatas.edad', 'userdatas.genero', 'userdatas.foto', 'userdatas.onesignal_id')
+                ->get();                //
+
+            foreach ($asistentes as $asistente) {
+                $user_id = $asistente->onesignal_id;
+                if (!$asistente->onesignal_id == null) {
+                    $nombreActividad = Actividad::findOrFail($confirmacion->actividad_id)->nombre;
+//                    $notificacion = OneSignal::sendNotificationToUser(
+//                        'Se ha confirmado nuevo asistente a la actividad: ' . $nombreActividad,
+//                        $asistente->onesignal_id,
+//                        $url = null,
+//                        $data = null,
+//                        $buttons = null,
+//                        $schedule = null
+//                    );
+                    $fields['include_player_ids'] = [$asistente->onesignal_id];
+                    $notificationMsg = 'Hello!! A tiny web push notification.!';
+                    OneSignal::sendPush($fields, $notificationMsg);
+                    $result['notificacion'] = [$asistente->onesignal_id => $notificationMsg];
+
+                    Log::info('Notificacion enviada a usuario', ['asistente' => $asistente->nombre, 'confirmacion_id' => $confirmacion->id]);
+
+                }
+            }
             Log::info($message, ['confirmacion_id' => $confirmacion->id]);
 
             return $this->sendResponse($result, $message);
@@ -106,20 +136,35 @@ class ConfirmacionController extends ApiController
             $confirmacion = Confirmacion::findOrFail($id);
             $confirmacionResource = new ConfirmacionResource($confirmacion);
 
-            $actividad = Actividad::findOrFail( $confirmacion->actividad_id);
+            $actividad = Actividad::findOrFail($confirmacion->actividad_id);
             $actividadResource = new ActividadResource($actividad);
 
             $asistentes = DB::table('confirmaciones')
                 ->where('actividad_id', '=', $actividad->id)
-                ->join('userdatas','userdatas.user_id','=','confirmaciones.user_id')
-                ->select('userdatas.id','userdatas.nombre','userdatas.edad','userdatas.genero','userdatas.foto')
+                ->join('userdatas', 'userdatas.user_id', '=', 'confirmaciones.user_id')
+                ->select('userdatas.id', 'userdatas.nombre', 'userdatas.edad', 'userdatas.genero', 'userdatas.foto', 'userdatas.onesignal_id')
                 ->get();                //
 
+            foreach ($asistentes as $asistente) {
+                $user_id = $asistente->id;
+                $asistente->foto = UserData::getFoto($user_id);
+                $asistente->genero = UserData::getGenero($user_id);
+                if (!$asistente->onesignal_id == null) {
+                    OneSignal::sendNotificationToUser(
+                        "Se ha confirmado nuevo asistente a la actividad: " . $actividad->nombre,
+                        $asistente->onesignal_id,
+                        $url = null,
+                        $data = null,
+                        $buttons = null,
+                        $schedule = null
+                    );
+                }
+            }
 
             $result = [
                 'confirmacion' => $confirmacionResource,
                 'actividad' => $actividadResource,
-                'asistentes' =>$asistentes
+                'asistentes' => $asistentes
             ];
             $message = 'Confirmacion recuperados correctamente';
 

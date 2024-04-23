@@ -13,7 +13,8 @@ class Userdata extends Model
         'edad',
         'acercade',
         'genero',
-        'user_id'
+        'user_id',
+        'onesignal_id'
     ];
 
     protected function user(): BelongsTo

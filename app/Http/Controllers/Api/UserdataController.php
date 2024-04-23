@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class UserdataController extends ApiController
 {
@@ -223,6 +224,43 @@ class UserdataController extends ApiController
         }
     }
 
-    //edit function
+    //addonesignal function, adds onesigna_id and tag
+    public function addonesignal(int $id,Request $request): JsonResponse
+    {
+        //validate request onesignal_id
+        $validator = Validator::make($request->all(), [
+            'onesignal_id' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError( 'Validation Error.', $validator->errors(), 422);
+        }
+        try {
+            DB::beginTransaction();
+            $userdata = Userdata::where('user_id', $id)->firstOrFail();
+
+            $userdata->update(['onesignal_id' => $request->onesignal_id]);
+            $userdata->save();
+
+            $result = [
+                'onesignal_id' => $request->onesignal_id,
+                'user' => $userdata,
+            ];
+DB::commit();
+
+            return $this->sendResponse( $result, 'Onesignal Id added successfully');
+        } catch (ModelNotFoundException $e) {
+            // rollback
+            DB::rollBack();
+
+            Log::error('User not found: ' . $id . '. ' . $e->getMessage());
+            return $this->sendError('User not foun: ' . $id, $e->getMessage(), 404);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Onesignal Id added failed: ' . $e->getMessage(), ['user_id' => $id, 'onesignal_id' => $request->onesignal_id]);
+            return $this->sendError('Onesignal Id added failed', $e->getMessage(), 500);
+        }
+    }
 
 }

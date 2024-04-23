@@ -139,3 +139,17 @@ DELETE {{host}}/api/user/120?XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+
+###
+# @group: user
+# @name adddOnesignal
+PUT {{host}}/api/user/addonesignal/119?XDEBUG_SESSION_START=PHPSTORM
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{$auth.token("MypasswordConfig")}}
+XDEBUG_SESSION: PHPSTORM;
+XDEBUG_SESSION_START: PHPSTORM;
+
+{
+    "onesignal_id": "75986018-e014-438a-ad8f-eed3e92a1fcb"
+}

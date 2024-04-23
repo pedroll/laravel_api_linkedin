@@ -27,7 +27,11 @@ class AppServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(now()->addDays(15));
         Passport::refreshTokensExpireIn(now()->addDays(100));
         Passport::personalAccessTokensExpireIn(now()->addMonths(6));
-        #Schema::defaultStringLength(191);
+        //Berkayk\OneSignal\OneSignalServiceProvider::class;
 
+        #Schema::defaultStringLength(191);
+//        AliasLoader::getInstance([
+//            'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class,
+//        ]);
     }
 }
